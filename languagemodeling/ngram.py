@@ -53,7 +53,12 @@ class NGram(LanguageModel):
 
         count = defaultdict(int)
 
-        # WORK HERE!!
+        for sent in sents:
+            sent = ["<s>"]*(n-1) + sent + ["</s>"]
+            for i in range(len(sent) - n + 1):
+                ngram = tuple(sent[i: i + n])
+                count[ngram] += 1
+                count[ngram[:-1]] += 1
 
         self._count = dict(count)
 
@@ -70,7 +75,22 @@ class NGram(LanguageModel):
         token -- the token.
         prev_tokens -- the previous n-1 tokens (optional only if n = 1).
         """
-        # WORK HERE!!
+        prob = 0
+        if not prev_tokens:
+            prev_tokens = []
+
+       # assert len(prev_tokens) == self._n - 1
+
+        tokens = prev_tokens + [token]
+
+        count_tokens = float(self.count(tuple(tokens)))
+
+        count_prev = self.count(tuple(prev_tokens))
+
+        if count_prev != 0:
+            prob = count_tokens / count_prev
+
+        return prob
 
     def sent_prob(self, sent):
         """Probability of a sentence. Warning: subject to underflow problems.

@@ -67,7 +67,7 @@ class NGram(LanguageModel):
         count = defaultdict(int)
 
         for sent in sents:
-            sent = addMarks(sent, n)
+            sent = addmarks(sent, n)
             for i in range(len(sent) - n + 1):
                 ngram = tuple(sent[i: i + n])
                 count[ngram] += 1
@@ -107,17 +107,35 @@ class NGram(LanguageModel):
 
         sent -- the sentence as a list of tokens.
         """
-        # WORK HERE !!
+        n = self._n
+
+        sent = addmarks(sent, n)
+
+        prob = 1
+        for i in range(n - 1, len(sent)):
+            prob *= self.cond_prob(sent[i], sent[i - n + 1: i])
+        return prob
 
     def sent_log_prob(self, sent):
         """Log-probability of a sentence.
 
         sent -- the sentence as a list of tokens.
         """
-        # WORK HERE!!
+        n = self._n
+        # add markers inicio y fin
+        sent = addmarks(sent, n)
+        prob = 0
+        for i in range(n - 1, len(sent)):
+            # sent[i] token
+            # sent[i - n + 1: i] prev_tokens
+            cond_prob = self.cond_prob(sent[i], sent[i - n + 1: i])
+            # aplico log sobre las probabilidades y las sumo
+            prob += math.log(cond_prob)
+        return prob
 
 
 class AddOneNGram(NGram):
+    """Add-one estimation (Laplace smoothing)."""
 
     def __init__(self, n, sents):
         """

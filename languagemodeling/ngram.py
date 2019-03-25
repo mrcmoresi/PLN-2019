@@ -1,6 +1,7 @@
 # https://docs.python.org/3/library/collections.html
 from collections import defaultdict
 import math
+import itertools
 
 
 def addmarks(sent, n):
@@ -146,14 +147,14 @@ class AddOneNGram(NGram):
         super().__init__(n, sents)
 
         # compute vocabulary
-        self._voc = voc = set()
+        # chain.from_iterable equivale a for sent in sents: for elem in sent
+        # despliego todos los sents y armo un conjunto agrengando el toke de cierre
+        self._voc = voc = set(list(itertools.chain.from_iterable(sents)) + ['</s>'])
         # WORK HERE!!
-
         self._V = len(voc)  # vocabulary size
 
     def V(self):
-        """Size of the vocabulary.
-        """
+        """Size of the vocabulary."""
         return self._V
 
     def cond_prob(self, token, prev_tokens=None):
@@ -162,7 +163,19 @@ class AddOneNGram(NGram):
         token -- the token.
         prev_tokens -- the previous n-1 tokens (optional only if n = 1).
         """
-        # WORK HERE!!
+        n = self._n
+        V = self._V
+        prob = 0
+
+        prev_tokens = tuple(prev_tokens) if prev_tokens else tuple()
+        assert len(prev_tokens) == n - 1
+
+        tokens = prev_tokens + tuple(token,)
+        count_prev_tokens = self._count.get(prev_tokens, 0)
+        if count_prev_tokens != 0:
+            # p = c(wi-1, wi)+ 1 / c(wi-s) + V
+            prob = (self._count.get(tokens, 0) + 1) / (count_prev_tokens + self._V)
+        return prob
 
 
 class InterpolatedNGram(NGram):

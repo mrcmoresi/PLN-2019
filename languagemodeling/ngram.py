@@ -3,7 +3,18 @@ from collections import defaultdict
 import math
 
 
+def addmarks(sent, n):
+    """
+    Add start and end markers.
+
+    input sent, n.
+    """
+    sent = ["<s>"] * (n - 1) + sent + ["</s>"]
+    return sent
+
+
 class LanguageModel(object):
+    """Language Model."""
 
     def sent_prob(self, sent):
         """Probability of a sentence. Warning: subject to underflow problems.
@@ -42,10 +53,12 @@ class LanguageModel(object):
 
 
 class NGram(LanguageModel):
+    """Ngram model."""
 
     def __init__(self, n, sents):
         """
-        n -- order of the model.
+        Input, n -- order of the model.
+
         sents -- list of sentences, each one being a list of tokens.
         """
         assert n > 0
@@ -54,7 +67,7 @@ class NGram(LanguageModel):
         count = defaultdict(int)
 
         for sent in sents:
-            sent = ["<s>"]*(n-1) + sent + ["</s>"]
+            sent = addMarks(sent, n)
             for i in range(len(sent) - n + 1):
                 ngram = tuple(sent[i: i + n])
                 count[ngram] += 1
@@ -76,20 +89,17 @@ class NGram(LanguageModel):
         prev_tokens -- the previous n-1 tokens (optional only if n = 1).
         """
         prob = 0
-        if not prev_tokens:
-            prev_tokens = []
 
-       # assert len(prev_tokens) == self._n - 1
+        # Si prev_tokens es None devuelvo una tupla vacia
+        # si no una tupla con los prev_tokens
+        prev_tokens = tuple(prev_tokens) if prev_tokens else tuple()
 
-        tokens = prev_tokens + [token]
+        tokens = prev_tokens + (token,)
 
-        count_tokens = float(self.count(tuple(tokens)))
+        count_prev_tokens = self.count(tuple(prev_tokens))
 
-        count_prev = self.count(tuple(prev_tokens))
-
-        if count_prev != 0:
-            prob = count_tokens / count_prev
-
+        if count_prev_tokens != 0:
+            prob = float(self.count(tuple(tokens)) / count_prev_tokens)
         return prob
 
     def sent_prob(self, sent):

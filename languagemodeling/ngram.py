@@ -4,6 +4,14 @@ import math
 import itertools
 
 
+def log2ext(x):
+    """
+    if x = 0 ==> -inf
+    if x != 0 ==> log2(x)
+    """
+    return (lambda x: math.log(x, 2) if x > 0 else float('-inf'))(x)
+
+
 def addmarks(sent, n):
     """
     Add start and end markers.
@@ -131,7 +139,7 @@ class NGram(LanguageModel):
             # sent[i - n + 1: i] prev_tokens
             cond_prob = self.cond_prob(sent[i], sent[i - n + 1: i])
             # aplico log sobre las probabilidades y las sumo
-            prob += math.log(cond_prob)
+            prob += log2ext(cond_prob)
         return prob
 
 
@@ -167,14 +175,21 @@ class AddOneNGram(NGram):
         V = self._V
         prob = 0
 
-        prev_tokens = tuple(prev_tokens) if prev_tokens else tuple()
-        assert len(prev_tokens) == n - 1
+        if not(prev_tokens):
+            prev_tokens = tuple()
 
-        tokens = prev_tokens + tuple(token,)
-        count_prev_tokens = self._count.get(prev_tokens, 0)
+        # prev_tokens = tuple(prev_tokens) if prev_tokens else tuple()
+        assert len(prev_tokens) == n - 1
+        # c(wi-s) + V
+        count_prev_tokens = self._count.get(prev_tokens,0) + V
+        tokens = prev_tokens + (token, )
+
+        # c(wi-1, wi)+ 1
+        count_tokens = self._count.get(tokens,0) + 1
+
         if count_prev_tokens != 0:
             # p = c(wi-1, wi)+ 1 / c(wi-s) + V
-            prob = (self._count.get(tokens, 0) + 1) / (count_prev_tokens + self._V)
+            prob = count_tokens / count_prev_tokens
         return prob
 
 

@@ -28,13 +28,13 @@ if __name__ == '__main__':
     # WORK HERE!! LOAD YOUR EVALUATION CORPUS
     corpus = PlaintextCorpusReader('dataset', 'new-comments-test-10.txt')
     sents = corpus.sents()
-    #sents = gutenberg.sents('austen-persuasion.txt')
+    # sents = gutenberg.sents('austen-persuasion.txt')
 
-    # compute the 
+    # compute the
     # WORK HERE!!
-    log_prob = None
-    e = None
-    p = None
+    log_prob = model.log_prob(sents)
+    e = model.cross_entropy(sents)
+    p = model.perplexity(sents)
 
     print('Log probability: {}'.format(log_prob))
     print('Cross entropy: {}'.format(e))

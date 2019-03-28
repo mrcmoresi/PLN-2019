@@ -44,21 +44,30 @@ class LanguageModel(object):
 
         sents -- the sentences.
         """
-        # WORK HERE!!
+        prob = 0.0
+        for sent in sents:
+            log_prob = self.sent_log_prob(sent)
+            if log_prob == -math.inf:
+                return log_prob
+            prob += log_prob
+        return prob
 
     def cross_entropy(self, sents):
         """Cross-entropy of a list of sentences.
 
         sents -- the sentences.
         """
-        # WORK HERE!!
+        prob = self.log_prob(sents)
+        m = sum(len(sents) + 1 for sent in sents)
+        entropy = float(-prob / m)
+        return entropy
 
     def perplexity(self, sents):
         """Perplexity of a list of sentences.
 
         sents -- the sentences.
         """
-        # WORK HERE!!
+        return math.pow(2.0, self.cross_entropy(sents))
 
 
 class NGram(LanguageModel):
@@ -105,10 +114,10 @@ class NGram(LanguageModel):
 
         tokens = prev_tokens + (token,)
 
-        count_prev_tokens = self.count(tuple(prev_tokens))
+        count_prev_tokens = self.count(prev_tokens)
 
         if count_prev_tokens != 0:
-            prob = float(self.count(tuple(tokens)) / count_prev_tokens)
+            prob = float(self.count(tokens) / count_prev_tokens)
         return prob
 
     def sent_prob(self, sent):
@@ -122,7 +131,7 @@ class NGram(LanguageModel):
 
         prob = 1
         for i in range(n - 1, len(sent)):
-            prob *= self.cond_prob(sent[i], sent[i - n + 1: i])
+            prob *= self.cond_prob(sent[i], tuple(sent[i - n + 1: i]))
         return prob
 
     def sent_log_prob(self, sent):
@@ -137,7 +146,7 @@ class NGram(LanguageModel):
         for i in range(n - 1, len(sent)):
             # sent[i] token
             # sent[i - n + 1: i] prev_tokens
-            cond_prob = self.cond_prob(sent[i], sent[i - n + 1: i])
+            cond_prob = self.cond_prob(sent[i], tuple(sent[i - n + 1: i]))
             # aplico log sobre las probabilidades y las sumo
             prob += log2ext(cond_prob)
         return prob
@@ -181,11 +190,11 @@ class AddOneNGram(NGram):
         # prev_tokens = tuple(prev_tokens) if prev_tokens else tuple()
         assert len(prev_tokens) == n - 1
         # c(wi-s) + V
-        count_prev_tokens = self._count.get(prev_tokens,0) + V
+        count_prev_tokens = self.count(prev_tokens) + V
         tokens = prev_tokens + (token, )
 
         # c(wi-1, wi)+ 1
-        count_tokens = self._count.get(tokens,0) + 1
+        count_tokens = self.count(tokens) + 1
 
         if count_prev_tokens != 0:
             # p = c(wi-1, wi)+ 1 / c(wi-s) + V
@@ -218,14 +227,24 @@ class InterpolatedNGram(NGram):
         print('Computing counts...')
         # WORK HERE!!
         # COMPUTE COUNTS FOR ALL K-GRAMS WITH K <= N
+        count = defaultdict(int)
+        for sent in train_sents:
+            count[()] += len(sent) + 1
+            for k in range(1, n + 1):
+                marked_sent = addmarks(sent, n)
+                for i in range(len(marked_sent) - k + 1):
+                    ngram = tuple(marked_sent[i: i + k])
+                    count[ngram] += 1
 
+        self._count = dict(count)
         # compute vocabulary size for add-one in the last step
         self._addone = addone
         if addone:
             print('Computing vocabulary...')
             self._voc = voc = set()
             # WORK HERE!!
-
+            # check it
+            voc = list(itertools.chain.from_iterable(sents)) + ['</s>']
             self._V = len(voc)
 
         # compute gamma if not given
@@ -234,14 +253,26 @@ class InterpolatedNGram(NGram):
         else:
             print('Computing gamma...')
             # WORK HERE!!
+            min_gamma, min_p = None, float('inf')
             # use grid search to choose gamma
+            for gamma in [1 + i * 5 for i in range(1000)]:
+                self._gamma = gamma
+                perp = self.perplexity(held_out_sents)
+                print("Gamma {} Perplexity {}".format(gamma, perp))
+
+                if perp < min_p:
+                    min_gamma, min_p = gamma, perp
+            self._gamma = gamma
+            print("Choosed gamma {}".format(min_gamma))
+            print("With perplexity {}".format(min_p))
+
 
     def count(self, tokens):
         """Count for an k-gram for k <= n.
 
         tokens -- the k-gram tuple.
         """
-        # WORK HERE!! (JUST A RETURN STATEMENT)
+        return self._count.get(tokens, 0)
 
     def cond_prob(self, token, prev_tokens=None):
         """Conditional probability of a token.
@@ -249,4 +280,80 @@ class InterpolatedNGram(NGram):
         token -- the token.
         prev_tokens -- the previous n-1 tokens (optional only if n = 1).
         """
-        # WORK HERE!!
+        # init variables
+        gamma = self._gamma
+        n = self._n
+        prob = 0
+
+        
+        if prev_tokens is None:
+            prev_tokens = ()
+        
+        # join tokens
+        ngram = prev_tokens + (token,)
+        
+        prev_lambdas_factor = 1.
+        
+        # calculate q_ML from n-gram down to unigram
+        for i in range(n):
+            # q_ML(token | prev_tokens) = count_token / count_prev_tokens.
+            # we want q_ML for n-grams n={1,2,3,..,n} i.e.
+            # q_ML(xn| xi...xn-1) that i={1, 2, 3,...,n-1}.
+
+            i_gram = ngram[i:]
+            i_count = self.count(i_gram)
+            
+            i_less_one_gram = i_gram[:-1] 
+            #c(xi...xn−1)
+            i_less_one_count = self.count(i_less_one_gram)
+            
+            # For every i-gram with 1 < k
+            if 1 < len(i_gram):
+                prob += prev_lambdas_factor * i_count / (i_less_one_count + gamma)
+                curr_lamb = prev_lambdas_factor * i_less_one_count / (i_less_one_count + gamma)
+                prev_lambdas_factor -= curr_lamb
+            # For 1-grams with addone smoothing
+            elif len(i_gram) == 1 and self._addone:
+                # c(i_gram) +1 / c(i_gram_-1) + V
+                prob += prev_lambdas_factor * (i_count + 1) / (i_less_one_count + self._V)
+            # For 1-grams without addone
+            else:
+                prob += prev_lambdas_factor * i_count / i_less_one_count
+        
+        return prob
+
+
+class BackOffNGram:
+ 
+    def __init__(self, n, sents, beta=None, addone=True):
+        """
+        Back-off NGram model with discounting as described by Michael Collins.
+ 
+        n -- order of the model.
+        sents -- list of sentences, each one being a list of tokens.
+        beta -- discounting hyper-parameter (if not given, estimate using
+            held-out data).
+        addone -- whether to use addone smoothing (default: True).
+        """
+ 
+    """
+       Todos los métodos de NGram.
+    """
+ 
+    def A(self, tokens):
+        """Set of words with counts > 0 for a k-gram with 0 < k < n.
+ 
+        tokens -- the k-gram tuple.
+        """
+ 
+    def alpha(self, tokens):
+        """Missing probability mass for a k-gram with 0 < k < n.
+ 
+        tokens -- the k-gram tuple.
+        """
+ 
+    def denom(self, tokens):
+        """Normalization factor for a k-gram with 0 < k < n.
+ 
+        tokens -- the k-gram tuple.
+        """

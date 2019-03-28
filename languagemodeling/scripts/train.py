@@ -18,11 +18,13 @@ import pickle
 
 from nltk.corpus import gutenberg
 
-from languagemodeling.ngram import NGram
+from languagemodeling.ngram import NGram, AddOneNGram, InterpolatedNGram
 from nltk.corpus import PlaintextCorpusReader
 
 models = {
     'ngram': NGram,
+    'addone': AddOneNGram,
+    'inter': InterpolatedNGram
 }
 
 
@@ -31,7 +33,8 @@ if __name__ == '__main__':
 
     # load the data
     # WORK HERE!! LOAD YOUR TRAINING CORPUS
-    corpus = PlaintextCorpusReader('dataset', 'new-comments-train-90.txt')
+    corpus = PlaintextCorpusReader('dataset', 'new-comments-tiny.txt')
+    #corpus = PlaintextCorpusReader('dataset', 'new-comments-train-90.txt')
     sents = corpus.sents()
     #sents = gutenberg.sents(['austen-emma.txt', 'austen-sense.txt'])
 

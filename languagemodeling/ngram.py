@@ -292,7 +292,9 @@ class InterpolatedNGram(NGram):
         # join tokens
         ngram = prev_tokens + (token,)
         
-        prev_lambdas_factor = 1.
+        # constraint
+        # sum(lambdas) = 1 with lambda_i >= 0
+        lambdas_factor = 1.
         
         # calculate q_ML from n-gram down to unigram
         for i in range(n):
@@ -300,30 +302,32 @@ class InterpolatedNGram(NGram):
             # we want q_ML for n-grams n={1,2,3,..,n} i.e.
             # q_ML(xn| xi...xn-1) that i={1, 2, 3,...,n-1}.
 
+            # ngram
             i_gram = ngram[i:]
             i_count = self.count(i_gram)
             
-            i_less_one_gram = i_gram[:-1] 
-            #c(xi...xn−1)
+            # ngram-1 with one token less
+            i_less_one_gram = i_gram[:-1]             
             i_less_one_count = self.count(i_less_one_gram)
             
-            # For every i-gram with 1 < k
+            # For every i-gram with 1 < i
             if 1 < len(i_gram):
-                prob += prev_lambdas_factor * i_count / (i_less_one_count + gamma)
-                curr_lamb = prev_lambdas_factor * i_less_one_count / (i_less_one_count + gamma)
-                prev_lambdas_factor -= curr_lamb
-            # For 1-grams with addone smoothing
+                prob += lambdas_factor * i_count / (i_less_one_count + gamma)
+                curr_lamb = lambdas_factor * i_less_one_count / (i_less_one_count + gamma)
+                lambdas_factor -= curr_lamb
+            # For 1-grams with addone 
             elif len(i_gram) == 1 and self._addone:
                 # c(i_gram) +1 / c(i_gram_-1) + V
-                prob += prev_lambdas_factor * (i_count + 1) / (i_less_one_count + self._V)
-            # For 1-grams without addone
+                prob += lambdas_factor * (i_count + 1) / (i_less_one_count + self._V)
+            # For 1-grams w/o addone
             else:
                 prob += prev_lambdas_factor * i_count / i_less_one_count
         
         return prob
 
 
-class BackOffNGram:
+# inherit from Ngram or not?
+class BackOffNGram(Ngram):
  
     def __init__(self, n, sents, beta=None, addone=True):
         """
@@ -335,10 +339,9 @@ class BackOffNGram:
             held-out data).
         addone -- whether to use addone smoothing (default: True).
         """
- 
-    """
-       Todos los métodos de NGram.
-    """
+        super().__init__(n, sents)
+        self.beta = beta
+        self.addones = addone
  
     def A(self, tokens):
         """Set of words with counts > 0 for a k-gram with 0 < k < n.

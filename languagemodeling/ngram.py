@@ -255,7 +255,7 @@ class InterpolatedNGram(NGram):
             # WORK HERE!!
             min_gamma, min_p = None, float('inf')
             # use grid search to choose gamma
-            for gamma in [1 + i * 5 for i in range(1000)]:
+            for gamma in [1 + i * 5 for i in range(100)]:
                 self._gamma = gamma
                 perp = self.perplexity(held_out_sents)
                 print("Gamma {} Perplexity {}".format(gamma, perp))
@@ -321,18 +321,18 @@ class InterpolatedNGram(NGram):
                 prob += lambdas_factor * (i_count + 1) / (i_less_one_count + self._V)
             # For 1-grams w/o addone
             else:
-                prob += prev_lambdas_factor * i_count / i_less_one_count
+                prob += lambdas_factor * i_count / i_less_one_count
         
         return prob
 
 
-# inherit from Ngram or not?
-class BackOffNGram(Ngram):
- 
+class BackOffNGram(LanguageModel):
+    """Back-off NGram model."""
+
     def __init__(self, n, sents, beta=None, addone=True):
         """
         Back-off NGram model with discounting as described by Michael Collins.
- 
+
         n -- order of the model.
         sents -- list of sentences, each one being a list of tokens.
         beta -- discounting hyper-parameter (if not given, estimate using
@@ -341,22 +341,94 @@ class BackOffNGram(Ngram):
         """
         super().__init__(n, sents)
         self.beta = beta
-        self.addones = addone
- 
+        self.addone = addone
+        self.counts = counts = defaultdict(int)
+        self.set_A = set_A = defaultdict(set)
+        self.voc = voc = set(
+            list(itertools.chain.from_iterable(sents)) + ['</s>'])
+        self.V = len(voc)
+        self.models = models = []
+
+        if beta is None:
+            # 90% training, 10% held-out
+            m = int(0.9 * len(sents))
+            train_sents = sents[:m]
+            held_out_sents = sents[m:]
+        else:
+            train_sents = sents
+
+        #  ngrams models n = 1, 2, 3, ... n
+        # and put it in a list [1-gram, 2-gram, 3-gram, ... ,n-gram]
+        for i in range(1, n + 1):
+            models.append(Ngram(i, train_sents))
+
+        for model in models[:1]:
+            n_of_model = model.n
+            for ngram, val in model.count.items():
+                if len(ngram) == n_of_model:
+                    n_m1_gram = ngram[:-1]
+                    # build A set 
+                    set_a[n_m1_gram].add(ngram[-1])
+
+        if beta is None:
+            m = int(0.9 * len(sents))
+            held_out_sents = sents[m:]
+            beta = self.calculate_beta(held_out_sents)
+        else:
+            self.alpha = self.calculate_alpha()
+            self.denom = self.calculate_denominator()
+
     def A(self, tokens):
         """Set of words with counts > 0 for a k-gram with 0 < k < n.
- 
+
         tokens -- the k-gram tuple.
         """
- 
+        return self._A[tokens]
+
     def alpha(self, tokens):
         """Missing probability mass for a k-gram with 0 < k < n.
- 
+
         tokens -- the k-gram tuple.
         """
- 
+        return self.alpha.get(tokens, 1.)
+
     def denom(self, tokens):
         """Normalization factor for a k-gram with 0 < k < n.
- 
+
         tokens -- the k-gram tuple.
         """
+        return self.denom.get(tokens, 1.)
+
+    def count(self, tokens):
+        """Return length of the token."""
+        n = len(tokens)
+        # check if it is first token
+        if tokens == n * ('<s>',):
+            n += 1
+        count = self.models[n - 1].counts[tokens]
+        return count
+
+    def calculate_beta(self, held_out_sents):
+        """Estimate beta param using held-out data."""
+        print("Begin calculate beta \n")
+        temp = .0
+        max_bound = float('-inf')
+        # i = [.0 ,.05 ,.1, .15 ... 1]
+        for i in [float(x * 0.05) for x in range(21)]:
+            self.beta = i
+            # need calculate alpha and denominator to calculare log_prob
+            self.alpha = self.calculate_alpha()
+            self.denom = self.calculate_denominator()
+            lp = self.log_prob(held_out_sents)
+            print(
+                "Beta {} Alpha {} denom {} log prob {}".format(
+                    self.beta, self.alpha, self.denom, lp))
+            if max_bound < lp:
+                max_bound = lp
+                temp = i
+
+        # beta between 0 and 1
+        assert(temp >= 0 and temp <= 1)
+        self.beta = temp
+        self.alpha = self.calculate_alpha()
+        self.denom = self.calculate_denominator()

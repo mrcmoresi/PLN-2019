@@ -19,6 +19,7 @@ Para generar oraciones partimos del token de inicio \<s> y luego se llama sucesi
 ### Ejemplos de oraciones generadas.
 
 A continuación se muestran las oraciones generadas con los modelos de ngramas con n = 1,2,3,4
+
 | Modelo N-grama| Oraciones generadas |
 | ------------- | ------------- |
 | Unigramas  | - de a en de la una bancos tatuada menos a la los al Presidente las no El compromiso , los una 18 seriedad que ya un por global como aunque actualidad de complicados alucinante aprobado menos mejoradas esfuerzo <br> - trazas que cultivada leyes 2006 para las que en definen los Acemoglu empleadas y de patente imperio demócratas ese educación Toda : historia una en 1996 contra Unidos infiltración serio las luchar formación hogares como económico Los una y las méritos sufrir de momento Las gobierno <br> - de actualidad Al externa estos Guerra como en el que capacidades complementado viene Ahora , críticos y hizo <br>- en puede , el . momento militar los fronterizas la determinar|

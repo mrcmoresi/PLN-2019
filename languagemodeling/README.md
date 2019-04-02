@@ -18,6 +18,14 @@ Para generar oraciones partimos del token de inicio \<s> y luego se llama sucesi
 
 ### Ejemplos de oraciones generadas.
 
+A continuación se muestran las oraciones generadas con los modelos de ngramas con n = 1,2,3,4
+| Modelo N-grama| Oraciones generadas |
+| ------------- | ------------- |
+| Unigramas  | - de a en de la una bancos tatuada menos a la los al Presidente las no El compromiso , los una 18 seriedad que ya un por global como aunque actualidad de complicados alucinante aprobado menos mejoradas esfuerzo <br> - trazas que cultivada leyes 2006 para las que en definen los Acemoglu empleadas y de patente imperio demócratas ese educación Toda : historia una en 1996 contra Unidos infiltración serio las luchar formación hogares como económico Los una y las méritos sufrir de momento Las gobierno <br> - de actualidad Al externa estos Guerra como en el que capacidades complementado viene Ahora , críticos y hizo <br>- en puede , el . momento militar los fronterizas la determinar|
+| Bigramas  | - La franja media anual del SBS hoy consideran miembros más largo plazo . <br> - y de la Administración europea , el gasto público definido .<br> - Una falta de que es la población que deben tener más racional . <br> -Y qué quería reformar la Asamblea General de la banca en el enorme diferencia entre ellos .  |
+| Trigramas  | - Algunos de los gobiernos restrinjan el gasto a medida que las heterodoxas dependen del apoyo popular dentro de ellos o sus vecinos - se basan en la Constitución de Estados Unidos , al menos el diez por ciento de dicho crecimiento se puede compensar cualquier empeoramiento de su país es capaz de defender una política migratoria para atraer una inversión , y clonar animales . <br> -Por el momento , el VIH / sida . <br> - El ejemplo más notable fue el tercer trimestre de 2008 - 2009 será cerca del 90 por ciento actualmente y las relaciones sinojaponesas . <br> - Si bien una estabilización continua persistió en los de independencia . |
+| Cuatrigramas  | - El nuevo presidente de Francia , que combinaba un gaullismo dominante y un Partido Comunista que el país era menor a un desembolso masivo de recursos financieros y de gestión idónea de los asuntos públicos de las sociedades como la de México o Chile . <br> - Si no se contiene pronto el brote , es además un llamado a las armas . <br> - La última elección que produjo un cambio cuando una coalición de unos vencedores que profesaban valores compartidos .<br> - Requerirá recursos importantes y el proceso principal que contribuye a este malestar : la importancia de tomar medidas ni actuar como si tuviéramos una alternativa de poder , las perspectivas de empleo , pero el prolongado conflicto salarial con los empleados . |
+
 
 ## Ejercicio 4.
 

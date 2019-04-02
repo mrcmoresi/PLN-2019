@@ -420,7 +420,7 @@ class BackOffNGram(LanguageModel):
         _denom = defaultdict(float)
         for ngram, amount in self.set_A.items():
             # print('Adentro del for')
-            acc = 0
+            acc = 0.
             #print(ngram, amount)
             for x in amount:
                 #print(amount)
@@ -433,7 +433,7 @@ class BackOffNGram(LanguageModel):
     def calculate_beta(self, held_out_sents):
         """Estimate beta param using held-out data."""
         print("Begin calculate beta \n")
-        temp = 0
+        temp = 0.
         max_bound = float('-inf')
         # i = [.0 ,.05 ,.1, .15 ... 1]
         for i in [float(x * 0.05) for x in range(21)]:

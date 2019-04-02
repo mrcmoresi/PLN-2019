@@ -385,8 +385,8 @@ class BackOffNGram(LanguageModel):
                     # print(set_A)
 
         if beta is None:
-            m = int(0.9 * len(sents))
-            held_out_sents = sents[m:]
+            # m = int(0.9 * len(sents))
+            # held_out_sents = sents[m:]
             beta = self.calculate_beta(held_out_sents)
         else:
             self._alpha = self.calculate_alpha()
@@ -398,12 +398,14 @@ class BackOffNGram(LanguageModel):
 
         alpha(x1, ... xi )= 1 - sum(c_discount(x1 .. xi x) / c(x1 .. xi))
         """
-        acc = 0
         _alpha = defaultdict(float)
         for ngram, amount in self.set_A.items():
+            acc = 0.
             # print(self.set_A.items())
             for x in amount:
+                # c_discount(x1 .. xi x)
                 c_discount = self.count(ngram + tuple([x])) - self.beta
+                # c(x1, ..., xi)
                 c = self.count(ngram)
                 acc += c_discount / c
             _alpha[ngram] = 1. - acc
@@ -415,10 +417,10 @@ class BackOffNGram(LanguageModel):
 
         denom(x1, .. xi) = 1 - sum(qd(x|x2 .. xi-1))
         """
-        acc = 0.
         _denom = defaultdict(float)
         for ngram, amount in self.set_A.items():
             # print('Adentro del for')
+            acc = 0
             #print(ngram, amount)
             for x in amount:
                 #print(amount)
@@ -431,7 +433,7 @@ class BackOffNGram(LanguageModel):
     def calculate_beta(self, held_out_sents):
         """Estimate beta param using held-out data."""
         print("Begin calculate beta \n")
-        temp = .0
+        temp = 0
         max_bound = float('-inf')
         # i = [.0 ,.05 ,.1, .15 ... 1]
         for i in [float(x * 0.05) for x in range(21)]:
@@ -486,7 +488,7 @@ class BackOffNGram(LanguageModel):
         # print(n)
         # print(self.models)
         # print(self.models[n - 1]._count)
-        count = self.models[n - 1].count(tuple(tokens,))
+        count = self.models[n - 1].count(tokens)
         return count
 
     def cond_prob(self, token, prev_tokens=None):
@@ -499,7 +501,7 @@ class BackOffNGram(LanguageModel):
 
         # 1 gram model
         if not prev_tokens:
-            #print("PREV TOKENS is NONE")
+            # print("PREV TOKENS is NONE")
             count = self.count(tuple([token]))
             count_total = self.count(tuple())
 
@@ -508,7 +510,7 @@ class BackOffNGram(LanguageModel):
             else:
                 prob = count / count_total
         # all the others n-gram model
-        else:  
+        else:
             # check if xi belongs A(x1 , ... , xi-1)
             if token in self.A(tuple(prev_tokens)):
                 tokens = tuple(prev_tokens) + tuple([token])

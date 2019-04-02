@@ -33,10 +33,10 @@ if __name__ == '__main__':
 
     # load the data
     # WORK HERE!! LOAD YOUR TRAINING CORPUS
-    corpus = PlaintextCorpusReader('dataset', 'new-comments-tiny.txt')
-    #corpus = PlaintextCorpusReader('dataset', 'new-comments-train-90.txt')
+    # corpus = PlaintextCorpusReader('dataset', 'new-comments-tiny.txt')
+    corpus = PlaintextCorpusReader('dataset', 'new-comments-train-90.txt')
     sents = corpus.sents()
-    #sents = gutenberg.sents(['austen-emma.txt', 'austen-sense.txt'])
+    # sents = gutenberg.sents(['austen-emma.txt', 'austen-sense.txt'])
 
     # train the model
     n = int(opts['-n'])

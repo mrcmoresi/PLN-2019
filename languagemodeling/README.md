@@ -41,11 +41,11 @@ Primero para este ejercicio se dividió el dataset en %90 para entrenamiento y %
 
 Log-probability (más alta mejor)
 
-![img](http://latex.codecogs.com/svg.latex?L+%3D+%5Csum_%7Bi%3D1%7D%5E%7Bm%7D+%7B%5Clog_%7B2%7D%28p%28x%5E%7Bi%7D%29%29%7D)
+![img](http://latex.codecogs.com/svg.latex?L%3D%5Csum_%7Bi%3D1%7D%5E%7Bm%7D%7B%5Clog_%7B2%7D%28p%28x%5E%7Bi%7D%29%29%7D)
 
 Cross-entropy (más baja mejor)
 
-![img](http://latex.codecogs.com/svg.latex?H+%3D+%5Cfrac%7B-1%7D%7BM%7D+%2A+L)
+![img](http://latex.codecogs.com/svg.latex?H%3D%5Cfrac%7B-1%7D%7BM%7D%2AL)
 
 Perplexity (más baja mejor)
 

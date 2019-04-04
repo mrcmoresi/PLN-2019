@@ -40,12 +40,15 @@ Además se agregó en la interfaz de train.py la opción de elegir este modelo.
 Primero para este ejercicio se dividió el dataset en %90 para entrenamiento y %10 reservado para test. Y se implementaron tres métricas vistas en clase, log-probability, cross-entropy y perplexity. Se agregó a la interfaz de eval el llamado al cálculo de estas tres métricas. Por lo tanto se entrena el modelo con el %90 del dataset y luego se evalua con el %10 restante.
 
 Log-probability (más alta mejor)
+
 ![img](http://latex.codecogs.com/svg.latex?L+%3D+%5Csum_%7Bi%3D1%7D%5E%7Bm%7D+%7B%5Clog_%7B2%7D%28p%28x%5E%7Bi%7D%29%29%7D)
 
 Cross-entropy (más baja mejor)
+
 ![img](http://latex.codecogs.com/svg.latex?H+%3D+%5Cfrac%7B-1%7D%7BM%7D+%2A+L)
 
 Perplexity (más baja mejor)
+
 ![img](http://latex.codecogs.com/svg.latex?2%5E%7BH%7D)
 
 
@@ -87,16 +90,29 @@ para unigramas, el mejor gamma es 10. bigramas 110, trigramas 160 y cuatrigramas
 Como podemos ver en la tabla a medida que crece el n, la medida de perplexity disminuye. 
 
 ## Ejercicio 7.
-En este ejercicio se implementó el suavizado Back-Off. Para ello construimos la clase BackOffNGram. Al igual que en el anterior ejercicio se implementó un metodo para estimar el valor de Beta en este caso mediante un barrido de posibilidades. 
+En este ejercicio se implementó el suavizado Back-Off. Para ello construimos la clase BackOffNGram. Al igual que en el anterior ejercicio se implementó un metodo para estimar el valor de Beta en este caso mediante un barrido de posibilidades. Sabemos a priori que el valor de Beta será entre 0 y 1 entonces partimos el intervalo en diez partes y el beta seleccionado será el que maximize la log prob luego se fija ese Beta para el modelo. Para cada uno de los modelos se reporta a continuación el barrido para conseguir el valor de Beta. 
+
+|Beta | Unigramas | Bigramas | Trigramas | Cuatrigramas|
+|:---:|-----------|----------|-----------|-------------|
+| 0.0 | **-7718025.352601002** | -inf | -inf |  -inf |
+| 0.1 | -7718025.352601002 | -5880806.400129013 | -6046083.138597587 | -6446313.496414582  |
+| 0.2 | -7718025.352601002 | -5804416.503966612 | -5773996.051445964 |  -6005103.339433806 |
+| 0.3 | -7718025.352601002 | -5765067.515546679 | -5628665.9717234755 |  -5767994.1890726965 |
+| 0.4 | -7718025.352601002 | -5741661.351914602 | -5537104.245458065 | -5616769.084029178  |
+| 0.5 | -7718025.352601002 | -5727882.912910021 | -5477271.90146417 | -5515674.741378643  |
+| 0.6 | -7718025.352601002 | **-5721369.88085302** | -5440572.9186013825 | -5450577.389939791  |
+| 0.7 | -7718025.352601002 | -5721675.4039853215 | **-5424607.53588324** | **-5417100.014850051** |
+| 0.8 | -7718025.352601002 | -5730389.661861994 | -5432926.706137322 | -5419814.746792188  |
+| 0.9 | -7718025.352601002 | -5754942.180876019 | -5485009.447407748 | -5486436.636362652  |
 
 Se entrenaron modelos con diferentes n = 1, 2, 3, 4. A continuacion se reporta la perplexity para cada uno de ellos
 
 |Ngrama|Perplexity|
 |:----:|:--------:|
-|1| wip |
-|2| wip |
-|3| wip |
-|4| wip |
+|1| 1.0070686524364396 |
+|2| 1.0052459310986406 |
+|3| 1.0049781914824645 |
+|4| 1.0049933867654602 |
 
 
 ## Comparacion entre modelos de suavizado
@@ -106,5 +122,5 @@ A continuacion se muestran los valores de perplexity para cada tamaño de ngrama
 |:--------------:|-------------------|--------------------|--------------------|--------------------|
 | Add One        | 1.0070681382087072| 1.0075553456062805 | 1.0098063164111457 | 1.0108439727463776 |
 | Interpolate    | 1.0078067739040324| 1.0054758126044951 | 1.005269947251109  | 1.00525107696564   |
-| Back-Off       | wip |wip | wip| wip|
+| Back-Off       | 1.0070686524364396 |1.0052459310986406 | **1.0049781914824645** | 1.0049933867654602 |
 

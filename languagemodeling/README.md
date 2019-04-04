@@ -27,11 +27,84 @@ A continuación se muestran las oraciones generadas con los modelos de ngramas c
 | Trigramas  | - Algunos de los gobiernos restrinjan el gasto a medida que las heterodoxas dependen del apoyo popular dentro de ellos o sus vecinos - se basan en la Constitución de Estados Unidos , al menos el diez por ciento de dicho crecimiento se puede compensar cualquier empeoramiento de su país es capaz de defender una política migratoria para atraer una inversión , y clonar animales . <br> -Por el momento , el VIH / sida . <br> - El ejemplo más notable fue el tercer trimestre de 2008 - 2009 será cerca del 90 por ciento actualmente y las relaciones sinojaponesas . <br> - Si bien una estabilización continua persistió en los de independencia . |
 | Cuatrigramas  | - El nuevo presidente de Francia , que combinaba un gaullismo dominante y un Partido Comunista que el país era menor a un desembolso masivo de recursos financieros y de gestión idónea de los asuntos públicos de las sociedades como la de México o Chile . <br> - Si no se contiene pronto el brote , es además un llamado a las armas . <br> - La última elección que produjo un cambio cuando una coalición de unos vencedores que profesaban valores compartidos .<br> - Requerirá recursos importantes y el proceso principal que contribuye a este malestar : la importancia de tomar medidas ni actuar como si tuviéramos una alternativa de poder , las perspectivas de empleo , pero el prolongado conflicto salarial con los empleados . |
 
+Lo que podemos observar acá es que cuando usamos modelos de unigramas, las oraciones no tienen mucho sentido, a medida que el modelo de n-gramas es más grande, las oraciones empiezan a cobrar mayor sentido. Más aún, en el modelo de bigramas ya podemos ver que finaliza cada oración con un punto. Un detalle que se puede ver, son los signos de puntuación, el tokenizador los está tomando como un token y eso hace que los puntos finales de las oraciones esten con un espacio luego de la última palabra. Pasa lo mismo con las comas, dos puntos, etc, se podría mejorar esto para que la generación de oraciones sea más "natural".
 
 ## Ejercicio 4.
+Este ejercicio constó de programar el suavizado Add-One para ello se definió una nueva clase AddOneNgram, la misma hereda de NGram. La inicialización de la clase es similar a la de NGram pero se agrega el tamaño del vocabulario . Además se modifica el calculo de las probabilidades usando la siguiente formula
+
+![img](http://latex.codecogs.com/svg.latex?P%28word%29%3D%5Cfrac%7Bwordcount%2B1%7D%7Bnumberofwords%2BV%7D)
+
+Además se agregó en la interfaz de train.py la opción de elegir este modelo.
 
 ## Ejercicio 5.
+Primero para este ejercicio se dividió el dataset en %90 para entrenamiento y %10 reservado para test. Y se implementaron tres métricas vistas en clase, log-probability, cross-entropy y perplexity. Se agregó a la interfaz de eval el llamado al cálculo de estas tres métricas. Por lo tanto se entrena el modelo con el %90 del dataset y luego se evalua con el %10 restante.
+
+Log-probability (más alta mejor)
+![img](http://latex.codecogs.com/svg.latex?L+%3D+%5Csum_%7Bi%3D1%7D%5E%7Bm%7D+%7B%5Clog_%7B2%7D%28p%28x%5E%7Bi%7D%29%29%7D)
+
+Cross-entropy (más baja mejor)
+![img](http://latex.codecogs.com/svg.latex?H+%3D+%5Cfrac%7B-1%7D%7BM%7D+%2A+L)
+
+Perplexity (más baja mejor)
+![img](http://latex.codecogs.com/svg.latex?2%5E%7BH%7D)
+
+
+Se entrenaron modelos Add-One con n = 1,2,3,4 y se calculo el valor de perplexity para cada modelo los resultados se muestran a continuación.
+
+|Ngrama|Perplexity|
+|:----:|:--------:|
+|1| 1.0070681382087072 |
+|2| 1.0075553456062805 |
+|3| 1.0098063164111457 |
+|4| 1.0108439727463776 |
+
+En la tabla podemos ver que a medida que crece el n, crece la medida de perplexity lo cual no es lo que deseeamos. El objetivo es minimizar la perplexity.
 
 ## Ejercicio 6.
+En este ejericio se implemento el suavizado por interpolacion, creando una nueva clase llamada InterpolatedNGram. La cual incluye la estimación del gamma por barrido de valores. En caso que no se pase el parámetro gamma, se usa el 10% del conjunto de entrenamiento como conjunto de Held-Out para estimar este parametro.
+Se agregó a la interfaz de train.py la opción para utilizar este modelo.
+Se entrenaron modelos con diferentes valores de n = 1, 2, 3, 4. Primero se reporta el barrido de gamma para encontrar el "mejor" gamma para cada modelo
+
+|Gamma| log prob (unigramas)| log prob (bigramas)|log prob (trigramas)|log prob (cuatrigramas)|
+|:---:|---------------------|--------------------|--------------------|-----------------------|
+|10   |**-8521199.334863318** | -6084102.56629145  | -6096795.83087352  | -6239268.536773331  |
+|60   |-8521199.334863318   | -5977344.166649291 | -5790151.842994055 | -5800524.714881214  |
+|110  |-8521199.334863318   | **-5967872.554864988** | -5748454.090111691 | -5738518.196349467  |
+|160  |-8521199.334863318   | -5970449.028596952 | **-5738869.232825182** | -5720562.604646363  |
+|210  |-8521199.334863318   | -5976672.607309182 | -5739609.617010944 | **-5716837.49348453** |
+|260  |-8521199.334863318   | -5984238.239187142 | -5744673.13759559  | -5719197.964933377  |
+
+En la tabla podemos ver que el valor de Gamma varia segun el tamaño de los ngramas.
+para unigramas, el mejor gamma es 10. bigramas 110, trigramas 160 y cuatrigramas 210. Luego de haber fijado los gamma para cada modelo se calculo la perplexity de cada modelo. A continuación se reporta la medidad de perplexity para estos modelos.
+
+|Ngrama|Perplexity|
+|:----:|:--------:|
+|1| 1.0078067739040324 |
+|2| 1.0054758126044951 |
+|3| 1.005269947251109 |
+|4| 1.00525107696564 |
+
+Como podemos ver en la tabla a medida que crece el n, la medida de perplexity disminuye. 
 
 ## Ejercicio 7.
+En este ejercicio se implementó el suavizado Back-Off. Para ello construimos la clase BackOffNGram. Al igual que en el anterior ejercicio se implementó un metodo para estimar el valor de Beta en este caso mediante un barrido de posibilidades. 
+
+Se entrenaron modelos con diferentes n = 1, 2, 3, 4. A continuacion se reporta la perplexity para cada uno de ellos
+
+|Ngrama|Perplexity|
+|:----:|:--------:|
+|1| wip |
+|2| wip |
+|3| wip |
+|4| wip |
+
+
+## Comparacion entre modelos de suavizado
+A continuacion se muestran los valores de perplexity para cada tamaño de ngrama y modelo de suavizado. El objetivo de esta tabla es tener una comparación de los modelos.
+
+|Modelo Suavizado| Unigramas | Bigramas | Trigramas | Cuatrigramas |
+|:--------------:|-------------------|--------------------|--------------------|--------------------|
+| Add One        | 1.0070681382087072| 1.0075553456062805 | 1.0098063164111457 | 1.0108439727463776 |
+| Interpolate    | 1.0078067739040324| 1.0054758126044951 | 1.005269947251109  | 1.00525107696564   |
+| Back-Off       | wip |wip | wip| wip|
+

@@ -18,13 +18,15 @@ import pickle
 
 from nltk.corpus import gutenberg
 
-from languagemodeling.ngram import NGram, AddOneNGram, InterpolatedNGram
+from languagemodeling.ngram import (
+    NGram, AddOneNGram, InterpolatedNGram, BackOffNGram)
 from nltk.corpus import PlaintextCorpusReader
 
 models = {
     'ngram': NGram,
     'addone': AddOneNGram,
-    'inter': InterpolatedNGram
+    'inter': InterpolatedNGram,
+    'backoff': BackOffNGram,
 }
 
 

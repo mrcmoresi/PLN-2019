@@ -110,10 +110,10 @@ Se entrenaron modelos con diferentes n = 1, 2, 3, 4. A continuacion se reporta l
 
 |Ngrama|Perplexity|
 |:----:|:--------:|
-|1| 1.0070686524364396 |
-|2| 1.0052459310986406 |
-|3| 1.0049781914824645 |
-|4| 1.0049733867654602 |
+|1| 973.71 |
+|2| 165.90 |
+|3| 127.29 |
+|4| 127.88 |
 
 
 ## Comparacion entre modelos de suavizado

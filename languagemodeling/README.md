@@ -56,10 +56,11 @@ Se entrenaron modelos Add-One con n = 1,2,3,4 y se calculo el valor de perplexit
 
 |Ngrama|Perplexity|
 |:----:|:--------:|
-|1| 1.0070681382087072 |
-|2| 1.0075553456062805 |
-|3| 1.0098063164111457 |
-|4| 1.0108439727463776 |
+|1| 973.23 |
+|2| 1561.06 |
+|3| 13810.55 |
+|4| 37666.34 |
+
 
 En la tabla podemos ver que a medida que crece el n, crece la medida de perplexity lo cual no es lo que deseeamos. El objetivo es minimizar la perplexity.
 
@@ -82,10 +83,10 @@ para unigramas, el mejor gamma es 10. bigramas 110, trigramas 160 y cuatrigramas
 
 |Ngrama|Perplexity|
 |:----:|:--------:|
-|1| 1.0078067739040324 |
-|2| 1.0054758126044951 |
-|3| 1.005269947251109 |
-|4| 1.00525107696564 |
+|1| 1991.95 |
+|2| 207.42 |
+|3| 169.81 |
+|4| 166.73 |
 
 Como podemos ver en la tabla a medida que crece el n, la medida de perplexity disminuye. 
 
@@ -119,8 +120,7 @@ Se entrenaron modelos con diferentes n = 1, 2, 3, 4. A continuacion se reporta l
 A continuacion se muestran los valores de perplexity para cada tamaño de ngrama y modelo de suavizado. El objetivo de esta tabla es tener una comparación de los modelos.
 
 |Modelo Suavizado| Unigramas | Bigramas | Trigramas | Cuatrigramas |
-|:--------------:|-------------------|--------------------|--------------------|--------------------|
-| Add One        | 1.0070681382087072| 1.0075553456062805 | 1.0098063164111457 | 1.0108439727463776 |
-| Interpolate    | 1.0078067739040324| 1.0054758126044951 | 1.005269947251109  | 1.00525107696564   |
-| Back-Off       | 1.0070686524364396 |1.0052459310986406 | **1.0049781914824645** | 1.0049733867654602 |
-
+|:--------------:|--------|---------|----------|----------|
+| Add One        | 973.23 | 1561.06 | 13810.55 | 37666.34 |
+| Interpolate    | 1991.95 | 207.42 | 169.81 | 166.73 |
+| Back-Off       | 973.71 | 165.90 | 127.29 | 127.88 |

@@ -47,10 +47,7 @@ class LanguageModel(object):
         """
         prob = 0.0
         for sent in sents:
-            log_prob = self.sent_log_prob(sent)
-            if log_prob == -math.inf:
-                return log_prob
-            prob += log_prob
+            prob += self.sent_log_prob(sent)
         return prob
 
     def cross_entropy(self, sents):
@@ -59,8 +56,8 @@ class LanguageModel(object):
         sents -- the sentences.
         """
         prob = self.log_prob(sents)
-        m = sum(len(sents) + 1 for sent in sents)
-        entropy = float(-prob / m)
+        m = sum(len(sent) + 1 for sent in sents)
+        entropy = -prob / float(m)
         return entropy
 
     def perplexity(self, sents):
@@ -258,18 +255,18 @@ class InterpolatedNGram(NGram):
         else:
             print('Computing gamma...')
             # WORK HERE!!
-            min_gamma, min_p = None, float('inf')
+            temp_gamma, max_prob = None, float('-inf')
             # use grid search to choose gamma
-            for gamma in [1 + i * 5 for i in range(100)]:
+            for gamma in range(10, 500, 50):#[i * 50 for i in range(1, 100)]:
                 self._gamma = gamma
-                perp = self.perplexity(held_out_sents)
-                print("Gamma {} Perplexity {}".format(gamma, perp))
+                lp = self.log_prob(held_out_sents)
+                print("Gamma {} Log Prob {}".format(gamma, lp))
 
-                if perp < min_p:
-                    min_gamma, min_p = gamma, perp
-            self._gamma = gamma
-            print("Choosed gamma {}".format(min_gamma))
-            print("With perplexity {}".format(min_p))
+                if max_prob < lp:
+                    temp_gamma, max_prob = gamma, lp
+            self._gamma = temp_gamma
+            print("Choosed gamma {}".format(temp_gamma))
+            print("With log prog {}".format(max_prob))
 
     def count(self, tokens):
         """Count for an k-gram for k <= n.
@@ -330,7 +327,7 @@ class InterpolatedNGram(NGram):
         return prob
 
 
-class BackOffNGram(LanguageModel):
+class BackOffNGram(NGram):
     """Back-off NGram model."""
 
     def __init__(self, n, sents, beta=None, addone=True):
@@ -351,7 +348,7 @@ class BackOffNGram(LanguageModel):
             list(itertools.chain.from_iterable(sents)) + ['</s>'])
         self.V = len(voc)
         self.models = models = []
-        self.n = n
+        self._n = n
 
         if beta is None:
             # 90% training, 10% held-out
@@ -436,15 +433,16 @@ class BackOffNGram(LanguageModel):
         temp = 0.
         max_bound = float('-inf')
         # i = [.0 ,.05 ,.1, .15 ... 1]
-        for i in [float(x * 0.05) for x in range(21)]:
-            self.beta = i
+        for i in [x*0.1 for x in range(10)]:
+        #for i in [float(x * 0.05) for x in range(21)]:
+            self.beta = float(i)
             # need calculate alpha and denominator to calculare log_prob
             self._alpha = self.calculate_alpha()
             self._denom = self.calculate_denominator()
             lp = self.log_prob(held_out_sents)
             print(
-                "Beta {} Alpha {} denom {} log prob {}".format(
-                    self.beta, self._alpha, self.denom, lp))
+                "Beta {} log prob {}".format(
+                    self.beta, lp))
             if max_bound < lp:
                 max_bound = lp
                 temp = i
@@ -452,6 +450,7 @@ class BackOffNGram(LanguageModel):
         # beta between 0 and 1
         assert(temp >= 0 and temp <= 1)
         self.beta = temp
+        print("Beta Selected {} with log prob {}".format(temp, max_bound))
         # recalculate alpha and denominator after new beta
         self._alpha = self.calculate_alpha()
         self._denom = self.calculate_denominator()

@@ -14,6 +14,7 @@ Options:
                   svm: Support Vector Machine
                   mnb: Multinomial Bayes
   -o <file>    Output model file.
+  -t --train    Train model
   -h --help     Show this screen.
 """
 from docopt import docopt
@@ -45,7 +46,13 @@ if __name__ == '__main__':
     else:
         model = models[model_type]()  # baseline
 
-    model.fit(X, y)
+    if opts['--train']:
+      #print("lalolanda")
+      model.fit(X, y)
+    else:
+      #print('otra cosa')
+      model.cross_validation(X, y)
+    #
 
     # save model
     filename = opts['-o']

@@ -26,10 +26,11 @@ if __name__ == "__main__":
     for dire in files:
         sub_dir = os.listdir(directory + dire)
         for f in sub_dir:
-            reader = InterTASSReader(str(directory + '/' + dire + '/' + f))
-            X, y = list(reader.X()), list(reader.y())
-            print("Dataset {}".format(f))
-            print("Total Amount of Tweets: {}".format(len(X)))
-            for item in Counter(y).items():
-                print(item[0], item[1])
-            print('\n')
+            if 'train' in str(f):
+                reader = InterTASSReader(str(directory + '/' + dire + '/' + f))
+                X, y = list(reader.X()), list(reader.y())
+                print("Dataset {}".format(f))
+                print("Total Amount of Tweets: {}".format(len(X)))
+                for item in Counter(y).items():
+                    print(item[0], item[1])
+                print('\n')

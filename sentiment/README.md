@@ -106,6 +106,7 @@ Features que mas aportan por clase
 
 ### Negativo
 10 features que mas aportan a la clase negativa
+
 |Feature| Peso |
 |-------|------|
 | no | 2.0879 |
@@ -120,6 +121,7 @@ Features que mas aportan por clase
 | cosa | 1.0261 |
 
 10 features que menos aportan a la clase negativa
+
 |Feature| Peso |
 |-------|------|
 | @USER | -0.9955 |
@@ -136,6 +138,7 @@ Features que mas aportan por clase
 
 ### Positivo
 10 features que mas aportan a la clase positiva
+
 |Feature| Peso |
 |-------|------|
 | ! | 2.9962 | 
@@ -151,6 +154,7 @@ Features que mas aportan por clase
 
 
 10 features que menos aportan a la clase positiva
+
 |Feature| Peso |
 |-------|------|
 |peor | -0.6631 |
@@ -167,6 +171,7 @@ Features que mas aportan por clase
 
 ### NEU
 10 features que mas aportan a la clase NEU
+
 |Feature| Peso |
 |-------|------|
 | si  | 1.3556 |
@@ -182,6 +187,7 @@ Features que mas aportan por clase
 
 
 10 features que menos aportan a la clase NEU
+
 |Feature| Peso |
 |-------|------|
 |hacer | -0.5426 |
@@ -198,6 +204,7 @@ Features que mas aportan por clase
 
 ### NONE
 10 features que mas aportan a la clase NONE
+
 |Feature| Peso |
 |-------|------|
 | ? | 2.2908 |
@@ -213,6 +220,7 @@ Features que mas aportan por clase
 
 
 10 features que menos aportan a la clase NONE
+
 |Feature| Peso |
 |-------|------|
 |hoy | -0.6634  |

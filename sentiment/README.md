@@ -244,6 +244,21 @@ Como trabajo a realizar seria sacar los signos de puntuación de los features, p
 
 Agregar Tabla con instancias mal clasificadas
 
+|Tweet | Prediccion | Etiqueta | Distancia|
+|------|------------|----------|----------|
+|@otonashi_saya Pero la verdad es que en general no voy mal de motivación... casi al revés, me sobra motivación (y ego  |N |P |0.4240|
+|@Nadieelosabe Vale vuelvo a preguntar. No sabia no que te siguiera  |N |NONE |0.4159|
+|Bueno, pues vamos a recuperar el tiempo perdido. Empezare por descargarme el Manchester City - West Ham, a ver que tal  |N |P |0.4141|
+|Cuando no puedo dormir, escribo todo lo que preocupa en una libreta que alguien me regaló y es como un somnífero instantáneo  |N |P |0.4110|
+|En realidad no soy tan blanca  |N |NEU |0.4106|
+|A mí nunca me podrán hacer una broma porque no cojo llamadas y menos cuando son ocultas  |N |NONE |0.4060|
+|No puedo evitar ir a beber una lata de refresco y acordarme de @LourdesBiurrun family y terminar sirviéndome en vaso...  |N |NEU |0.3983|
+|Mi madre me deja ponerme rubia pero no el pelo morado  |N |NEU |0.3958|
+|@SergioRevolS Pero este verano tampoco ha llegado a hacer calor, sobre todo si lo comparamos con el pasado  |N |P |0.3879|
+|@albertbru una especie de Titanic pero en versión cutre no?  |NONE |N |0.3669|
+
+
+
 Instancia mal clasificada
 'Cuando no puedo dormir, escribo todo lo que preocupa en una libreta que alguien me regaló y es como un somnífero instantáneo '
 
@@ -301,7 +316,7 @@ El mejor clasificar obtenido fue un svm, con el preprocesamiento realizado en la
 Ahora se puso a prueba el mejor clasificador obteenido en el conjunto de datos de test final de interTASS Español.
 Los resultados obtenidos son los siguientes:
 
-Accuracy: 53.92% 
-Macro-Precision: 41.75%
-Macro-Recall: 36.38%
-Macro-F1: 38.88%
+- Accuracy: 53.92% 
+- Macro-Precision: 41.75%
+- Macro-Recall: 36.38%
+- Macro-F1: 38.88%

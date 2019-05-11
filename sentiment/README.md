@@ -259,7 +259,7 @@ Se ordenan por la diferencia entre la probabilidad de la clase predicha y el sco
 
 
 
-Instancia mal clasificada
+### Ejemplo Instancia mal clasificada
 'Cuando no puedo dormir, escribo todo lo que preocupa en una libreta que alguien me regaló y es como un somnífero instantáneo '
 
 

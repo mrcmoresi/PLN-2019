@@ -241,8 +241,8 @@ El signo de exclamación ! que sea el primero token que mas aporta, da la idea q
 Como trabajo a realizar seria sacar los signos de puntuación de los features, para ver si se agregan token mas representativos por clase.
 
 ## Ejercicio 5: Análisis de Error.
-
-Agregar Tabla con instancias mal clasificadas
+En la siguiente tabla se muestan las primeras 10 instancias mal clasificadas.
+Se ordenan por la diferencia entre la probabilidad de la clase predicha y el score de la etiqueta. 
 
 |Tweet | Prediccion | Etiqueta | Distancia|
 |------|------------|----------|----------|

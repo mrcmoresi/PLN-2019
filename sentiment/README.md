@@ -54,16 +54,15 @@ A continuación se muestran los resultados de estas mejoras, sobre el svm para c
 
 |SVM con mejoras| ES | CR | PE |
 |------|------|------|------|
-|Accuracy:| 51.98% |52.67% | 42.80%|
-|Macro-Precision:| 40.27% | 45.92% | 37.21% |
-|Macro-Recall:| 39.90% | 44.26% | 38.52% |
-|Macro-F1:| 40.09% | 45.07% | 37.86% |
-
+|Accuracy:| **55.34%** | **53.00%** | 49.60%|
+|Macro-Precision:| 40.76% | 67.03% | 38.20% |
+|Macro-Recall:| 36.78% | 40.91% | 37.92% |
+|Macro-F1:| 38.67% | 50.81% | 38.06% |
 
 
 |MNB con mejoras| ES | CR | PE |
 |------|------|------|------|
-|Accuracy:| 54.74% | 52.33% | 50.20%  |
+|Accuracy:| 54.74% | 52.33% | **50.20%**  |
 |Macro-Precision:| 78.37% | 69.57% | 36.03% |
 |Macro-Recall:| 35.54% | 39.27% | 34.01% |
 |Macro-F1:| 48.90% | 50.20% | 34.99% |
@@ -72,7 +71,7 @@ A continuación se muestran los resultados de estas mejoras, sobre el svm para c
 
 |LR con mejoras| ES | CR | PE |
 |------|------|------|------|
-|Accuracy:| **55.53%**  | **52.67%**  | **49.60%**  |
+|Accuracy:| 55.23%  | 52.67%  | 49.60%  |
 |Macro-Precision:| 38.38% | 66.79% | 38.51% |
 |Macro-Recall:| 36.99% | 40.72% | 37.44% |
 |Macro-F1:| 37.67% | 50.60% | 37.97% |
@@ -106,21 +105,195 @@ Para poder decidir cual es la mejor combinacion, se reporto la accuracy para cad
 Features que mas aportan por clase
 
 ### Negativo
-no 2.0879
-triste 1.8400
-odio 1.3438
-estan 1.2939
-peor 1.2710
-feo 1.1198
-mismo 1.1140
-puto 1.0598
-puta 1.0269
-cosa 1.0261
+10 features que mas aportan a la clase negativa
+|Feature| Peso |
+|-------|------|
+| no | 2.0879 |
+| triste | 1.8400 |
+| odio | 1.3438 |
+| estan | 1.2939 |
+| peor | 1.2710 |
+| feo | 1.1198 |
+| mismo | 1.1140 |
+| puto | 1.0598 |
+| puta | 1.0269 |
+| cosa | 1.0261 |
+
+10 features que menos aportan a la clase negativa
+|Feature| Peso |
+|-------|------|
+| @USER | -0.9955 |
+| bonito | -1.0925 |
+| buen | -1.1068 |
+| primer | -1.1182 |
+| mejor | -1.1562 |
+| buena | -1.2147 |
+| genial | -1.2426 |
+| gracias | -1.5045 |
+| URL | -1.6904 |
+| ! | -2.6488 |
+
 
 ### Positivo
+10 features que mas aportan a la clase positiva
+|Feature| Peso |
+|-------|------|
+| ! | 2.9962 | 
+| gracias | 2.1531 |
+| buen | 2.0653 |
+| genial | 1.6863 |
+| mejor | 1.5717 |
+| guapa | 1.5389 |
+| feliz | 1.2997 |
+| buenos | 1.1467 |
+| bonito | 1.1370 |
+| URL | 1.0888 |
+
+
+10 features que menos aportan a la clase positiva
+|Feature| Peso |
+|-------|------|
+|peor | -0.6631 |
+|alguna | -0.6660 |
+|si | -0.6843 |
+|odio | -0.7109 |
+|alguien | -0.7488 |
+|pues | -0.7636 |
+|pone | -0.7720 |
+|? | -0.9156 |
+|triste | -1.1995 |
+|no | -2.0758 |
+
 
 ### NEU
+10 features que mas aportan a la clase NEU
+|Feature| Peso |
+|-------|------|
+| si  | 1.3556 |
+| nerviosa  | 1.0524 |
+| casa  | 0.9947 |
+| aunque  | 0.9659 |
+| claro  | 0.8959 |
+| pasa  | 0.8855 |
+| hacen  | 0.8828 |
+| vez  | 0.8765 |
+| serio  | 0.8586 |
+| dice  | 0.8273 |
+
+
+10 features que menos aportan a la clase NEU
+|Feature| Peso |
+|-------|------|
+|hacer | -0.5426 |
+|creo | -0.5640 |
+|buen | -0.5706 |
+|quiero | -0.5991 |
+|buenos | -0.6231 |
+|cosas | -0.7406 |
+|? | -0.7619 |
+|ano | -0.7683 |
+|hoy | -0.9171 |
+|gracias | -1.0973 |
+
 
 ### NONE
+10 features que mas aportan a la clase NONE
+|Feature| Peso |
+|-------|------|
+| ? | 2.2908 |
+| " | 1.2808 |
+| semana | 1.2582 |
+| alguna | 1.0930 |
+| video | 1.0264 |
+| jugar | 0.9578 |
+| primer | 0.9196 |
+| ahora | 0.8912 |
+| URL | 0.8493 |
+| fechas | 0.8416 |
 
-To be continue.. 
+
+10 features que menos aportan a la clase NONE
+|Feature| Peso |
+|-------|------|
+|hoy | -0.6634  |
+|triste |-0.6715 |
+|ser |-0.6731 |
+|siempre| -0.6951 |
+|vida |-0.6983 |
+|buen |-0.7027 |
+|estan| -0.8463 |
+|ma |-0.8681 |
+|mal| -0.9625 |
+|...| -1.0747 |
+
+
+Los features que mas aportan por clases tienen sentido en general de acuerdo a cada clase. 
+Resulta extraño que el token de URL aparezca como el decimo mejor token de la clase positiva. 
+El signo de exclamación ! que sea el primero token que mas aporta, da la idea que tweets que usan ! es para hacer enfasis en sentimientos positivos.
+Como trabajo a realizar seria sacar los signos de puntuación de los features, para ver si se agregan token mas representativos por clase.
+
+## Ejercicio 5: Análisis de Error.
+
+Agregar Tabla con instancias mal clasificadas
+
+Instancia mal clasificada
+'Cuando no puedo dormir, escribo todo lo que preocupa en una libreta que alguien me regaló y es como un somnífero instantáneo '
+
+
+|N | NEU |NONE |P|
+|---|----|----|---|
+|0.57506126 |0.12920719| 0.13164904 |0.1640825 |
+
+Distancia entre el tag y clase predicha: 0.410979
+
+
+|Feature|Peso|
+|-----|------|
+|no | 2.0879 |
+|puedo | 0.6061 |
+|dormir | 0.4247 |
+|alguien | 0.0520 |
+|escribo | -0.3563 |
+|, | -0.5794 |
+
+Podemos ver que el token "no", aporta significativamente a la clase negativa. Pero semanticamente no es una negacion, expresa una situacion.
+
+Reemplazamos el token "no" por la frase tengo insomnio.
+'Cuando tengo insomnio, escribo todo lo que preocupa en una libreta que alguien me regaló y es como un somnífero instantáneo '
+
+|N | NEU |NONE |P|
+|---|----|----|---|
+|0.36225665 |0.15590209| 0.21313609| 0.26870516|
+
+
+|Feature|Peso|
+|-----|------|
+|alguien | 0.0520 |
+|escribo | -0.3563 |
+|, | -0.5794 |
+
+Agrego ahora tokens positivos con el objetivo de ver cuantos tokens positivos cambia la prediccion
+'Cuando tengo insomnio, escribo todo lo que preocupa en una libreta que alguien me regaló y es como el mejor somnífero instantáneo '
+
+|N | NEU |NONE |P|
+|---|----|----|---|
+|0.25377219| 0.12917566 | 0.18663001 | 0.43042214|
+
+|Feature|Peso|
+|-----|------|
+|alguien | 0.0520 |
+|escribo | -0.3563 |
+|, | -0.5794 |
+|mejor | -1.1562 |
+
+
+## Ejercicio 6: Análisis Final.
+
+El mejor clasificar obtenido fue un svm, con el preprocesamiento realizado en la seccion previa
+Ahora se puso a prueba el mejor clasificador obteenido en el conjunto de datos de test final de interTASS Español.
+Los resultados obtenidos son los siguientes:
+
+Accuracy: 53.92% 
+Macro-Precision: 41.75%
+Macro-Recall: 36.38%
+Macro-F1: 38.88%

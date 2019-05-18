@@ -23,60 +23,73 @@ class POSStats:
         """
         # WORK HERE!!
         # COLLECT REQUIRED STATISTICS INTO DICTIONARIES.
+        #self._tagged_sents = tagged_sents
+        self._token_count = 0
+        self._sent_count = 0
+
+        self._tag_word_dict = defaultdict(lambda: defaultdict(int))
+        self._word_tag_dict = defaultdict(lambda: defaultdict(int))
+
+        for sent in tagged_sents:
+            self._sent_count += 1
+            for word, tag in sent:
+                self._token_count += 1
+                self._word_tag_dict[word][tag] += 1
+                self._tag_word_dict[tag][word] += 1
 
     def sent_count(self):
         """Total number of sentences."""
-        # WORK HERE!!
+        return self._sent_count
 
     def token_count(self):
         """Total number of tokens."""
-        # WORK HERE!!
+        return self._token_count
 
     def words(self):
         """Vocabulary (set of word types)."""
-        # WORK HERE!!
+        return self._word_tag_dict.keys()
 
     def word_count(self):
         """Vocabulary size."""
-        # WORK HERE!!
+        return len(self._word_tag_dict)
 
     def word_freq(self, w):
         """Frequency of word w."""
-        # WORK HERE!!
+        return sum([count for tag, count in self._word_tag_dict[w].items()])
 
     def unambiguous_words(self):
         """List of words with only one observed POS tag."""
-        # WORK HERE!!
+        return self.ambiguous_words(1)
 
     def ambiguous_words(self, n):
         """List of words with n different observed POS tags.
 
         n -- number of tags.
         """
-        # WORK HERE!!
+        return [word for word, tags in self._word_tag_dict.items() if len(tags) == n]
 
     def tags(self):
         """POS Tagset."""
-        # WORK HERE!!
+        return self._tag_word_dict.keys()
 
     def tag_count(self):
         """POS tagset size."""
-        # WORK HERE!!
+        return len(self.tags())
 
     def tag_freq(self, t):
         """Frequency of tag t."""
-        # WORK HERE!!
+        return sum([count for tag, count in self._tag_word_dict[t].items()])
 
     def tag_word_dict(self, t):
         """Dictionary of words and their counts for tag t."""
-        return dict(self._tcount[t])
+        return dict(self._tag_word_dict[t])
 
 
 if __name__ == '__main__':
     opts = docopt(__doc__)
 
     # load the data
-    corpus = SimpleAncoraCorpusReader('ancora/ancora-3.0.1es/')
+    corpus = SimpleAncoraCorpusReader('./ancora-dataset/ancora-3.0.1es/')
     sents = corpus.tagged_sents()
 
     # compute the statistics

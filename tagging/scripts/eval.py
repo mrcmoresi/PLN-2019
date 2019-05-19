@@ -12,8 +12,9 @@ Options:
 from docopt import docopt
 import pickle
 import sys
-from collections import defaultdict
+from collections import defaultdict, Counter
 
+from sklearn.metrics import confusion_matrix
 from tagging.ancora import SimpleAncoraCorpusReader
 
 
@@ -47,7 +48,9 @@ if __name__ == '__main__':
     knw_hits, knw_total = 0, 0
     unk_hits, unk_total = 0, 0
 
-    tags_gold_standard, tags_annotated = [], []
+    err_count = defaultdict(lambda: defaultdict(int))
+    err_sent = defaultdict(lambda: defaultdict(set))
+
     n = len(sents)
 
     for i, sent in enumerate(sents):
@@ -73,11 +76,17 @@ if __name__ == '__main__':
         else:
             known_acc = (hits - unk_hits) / (total - unk_total)
 
+        for tag1, tag2 in zip(tagged_sent, gold_tag_sent):
+            err_count[tag2][tag1] += 1
+            if tag2 != tag1:
+                # keep index of miss tagged sent
+                err_sent[tag2][tag1].add(i)
+
         format_str = ' i {} (Accuracy {:2.2f}% / Known {:2.2f}% / Unknown {:2.2f}%)'
         progress(format_str.format(i, accuracy, known_acc, unk_acc))
 
     accuracy_global = hits / total
-
+    print(err_sent)
     if total == unk_total:
         known_acc_glob = 0.0
     else:
@@ -86,3 +95,7 @@ if __name__ == '__main__':
     unk_acc_glob = unk_hits / unk_total
     print('\n Accuracy: {:2.2f}% / Known {:2.2f}% / Uknown {:2.2f}%'.format(
         accuracy_global, known_acc_glob, unk_acc_glob))
+
+    if opts['-c']:
+        print('Confusion Matrix')
+        # WORK IN PROGRESS

@@ -29,7 +29,7 @@ if __name__ == '__main__':
 
     # load the data
     files = 'CESS-CAST-(A|AA|P)/.*\.tbf\.xml'
-    corpus = SimpleAncoraCorpusReader('ancora/ancora-3.0.1es/', files)
+    corpus = SimpleAncoraCorpusReader('ancora-dataset/ancora-3.0.1es/', files)
     sents = corpus.tagged_sents()
 
     # train the model

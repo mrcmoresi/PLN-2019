@@ -21,13 +21,16 @@ class POSStats:
         """
         tagged_sents -- corpus (list/iterable/generator of tagged sentences)
         """
-        # WORK HERE!!
         # COLLECT REQUIRED STATISTICS INTO DICTIONARIES.
-        #self._tagged_sents = tagged_sents
+
         self._token_count = 0
         self._sent_count = 0
-
+        # Build a dict with the following shape
+        # {tag1: {word1: amount1, word2: amount2...} ... tagn: {word1:amount1, word2: amount2..}}
         self._tag_word_dict = defaultdict(lambda: defaultdict(int))
+
+        # Build a dict with the following shape
+        # {word1: {tag1: amount1, tag2: amount2...} ... wordn: {tag1:amount1, tag2: amount2..}}
         self._word_tag_dict = defaultdict(lambda: defaultdict(int))
 
         for sent in tagged_sents:

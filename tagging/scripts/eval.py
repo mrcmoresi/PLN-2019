@@ -17,6 +17,8 @@ from collections import defaultdict, Counter
 from sklearn.metrics import confusion_matrix
 from tagging.ancora import SimpleAncoraCorpusReader
 
+import matplotlib.pyplot as plt
+
 
 def progress(msg, width=None):
     """Ouput the progress of something on the same line."""
@@ -82,20 +84,38 @@ if __name__ == '__main__':
                 # keep index of miss tagged sent
                 err_sent[tag2][tag1].add(i)
 
-        format_str = ' i {} (Accuracy {:2.2f}% / Known {:2.2f}% / Unknown {:2.2f}%)'
+        format_str = ' i {} (Accuracy {:.2f}% / Known {:.2f}% / Unknown {:.2f}%)'
         progress(format_str.format(i, accuracy, known_acc, unk_acc))
 
     accuracy_global = hits / total
-    print(err_sent)
+    # print(err_sent)
     if total == unk_total:
         known_acc_glob = 0.0
     else:
         known_acc_glob = (hits - unk_hits) / (total - unk_total)
 
     unk_acc_glob = unk_hits / unk_total
-    print('\n Accuracy: {:2.2f}% / Known {:2.2f}% / Uknown {:2.2f}%'.format(
+    print('\n Accuracy: {:.2f}% / Known {:.2f}% / Uknown {:.2f}%'.format(
         accuracy_global, known_acc_glob, unk_acc_glob))
 
     if opts['-c']:
-        print('Confusion Matrix')
-        # WORK IN PROGRESS
+        print('\nConfusion Matrix')
+        print('================')
+        # select most frequent tags
+        most_freq_tag = sorted(err_count.keys(),
+                               key=lambda tag: -sum(err_count[tag].values()))
+        tags = most_freq_tag[:10]
+        print('G \ M', end='')
+        for tag in tags:
+            print('\t{}'.format(tag), end='')
+        print('')
+
+        for tag1 in tags:
+            print('{}\t'.format(tag1), end='')
+            for tag2 in tags:
+                if err_count[tag1][tag2] > 0:
+                    acc = err_count[tag1][tag2] / total
+                    print('{:.3f}\t'.format(acc), end='')
+                else:
+                    print('-\t'.format(acc), end='')
+            print('')

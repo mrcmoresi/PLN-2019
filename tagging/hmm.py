@@ -1,5 +1,6 @@
 import math
 import itertools
+from collections import defaultdict
 
 
 def log2ext(x):
@@ -141,9 +142,63 @@ class ViterbiTagger:
         """
         hmm -- the HMM.
         """
+        self._hmm = hmm
 
     def tag(self, sent):
         """Returns the most probable tagging for a sentence.
 
         sent -- the sentence.
         """
+        hmm = self._hmm
+        n = hmm._n
+        tagset = hmm._tagset
+        # table for viterbi algorithm
+        # pi = { key : { prev_tags : (log_prob, list_tags) } }
+        self._pi = pi = defaultdict(lambda: defaultdict(tuple))
+        # initilization
+        # from book pi(0, *, * ) = 1
+        pi[0][("<s>",) * (n - 1)] = (log2ext(1.), [])
+
+        length_sent = len(sent)
+
+        # build table
+        for i in range(1, length_sent + 1):
+            word = sent[i - 1]
+            for tag in tagset:
+                # e(word|tag) from book e(x_k | v)
+                # P(word | tag)
+                prob_word_tag = hmm.out_prob(word, tag)
+                if prob_word_tag > 0.:
+                    # check previous column
+                    for prev_tags, (log_prob, list_tags) in pi[i - 1].items():
+                        # q(tag | prev_tags) from book q(v | w, u)
+                        q_prob = hmm.trans_prob(tag, prev_tags)
+
+                        if q_prob > 0.:
+                            # from book pi(x-1, w, u) x q()
+                            # new_log_prob = log_prob * q_prob * prob_word_tag
+                            new_log_prob = (log_prob + log2ext(q_prob) +
+                                            log2ext(prob_word_tag))
+                            new_list_tags = prev_tags + (tag,)
+                            new_prev_tags = (prev_tags + (tag,))[1:]
+
+                            # look for the tag which maximize the pro
+                            # or if new_prev_tags not in the table, add it.
+                            if ((new_prev_tags not in pi[i]) or (new_log_prob > pi[i][new_prev_tags][0])):
+                                pi[i][new_prev_tags] = (new_log_prob, new_list_tags)
+        # return max prob
+        max_prob = float('-inf')
+        best_tags = [] 
+
+        # check all the posible list of tags for length sent
+        for prev_tags, (log_prob, list_tags) in pi[length_sent].items():
+            # from book q(STOP | u, v)
+            q_prob_stop = hmm.trans_prob('</s>', prev_tags)
+            # new_log_prob = log_prob * q_prob_stop
+            new_log_prob = log_prob + log2ext(q_prob_stop)
+            if new_log_prob > max_prob:
+                max_prob = new_log_prob
+                best_tags = list_tags
+
+        return best_tags
+

@@ -157,7 +157,7 @@ class ViterbiTagger:
         self._pi = pi = defaultdict(lambda: defaultdict(tuple))
         # initilization
         # from book pi(0, *, * ) = 1
-        pi[0][("<s>",) * (n - 1)] = (log2ext(1.), [])
+        pi[0][("<s>",) * (n - 1)] = (log2ext(1.0), [])
 
         length_sent = len(sent)
 
@@ -179,21 +179,27 @@ class ViterbiTagger:
                             # new_log_prob = log_prob * q_prob * prob_word_tag
                             new_log_prob = (log_prob + log2ext(q_prob) +
                                             log2ext(prob_word_tag))
-                            new_list_tags = prev_tags + (tag,)
-                            new_prev_tags = (prev_tags + (tag,))[1:]
-
+                            
+                            new_list_tags = list_tags + [tag]
+                            
+                            new_prev_tags = (prev_tags + tuple(tag,))[1:]
+                            # print("LIST tags",list_tags, type(list_tags))
+                            # print('-----')
+                            # print("Tag", tag, type(tag))
+                            # print('-----')
+                            # print("NEW LIST OF TAGS ", new_list_tags, type(new_list_tags))
                             # look for the tag which maximize the pro
                             # or if new_prev_tags not in the table, add it.
-                            if ((new_prev_tags not in pi[i]) or (new_log_prob > pi[i][new_prev_tags][0])):
+                            if ((new_prev_tags not in pi[i-1]) or (new_log_prob > pi[i-1][new_prev_tags][0])):
                                 pi[i][new_prev_tags] = (new_log_prob, new_list_tags)
         # return max prob
         max_prob = float('-inf')
-        best_tags = [] 
-
+        best_tags = []
+        print(dict(pi))
         # check all the posible list of tags for length sent
         for prev_tags, (log_prob, list_tags) in pi[length_sent].items():
             # from book q(STOP | u, v)
-            q_prob_stop = hmm.trans_prob('</s>', prev_tags)
+            q_prob_stop = hmm.trans_prob("</s>", prev_tags)
             # new_log_prob = log_prob * q_prob_stop
             new_log_prob = log_prob + log2ext(q_prob_stop)
             if new_log_prob > max_prob:
@@ -201,4 +207,3 @@ class ViterbiTagger:
                 best_tags = list_tags
 
         return best_tags
-
